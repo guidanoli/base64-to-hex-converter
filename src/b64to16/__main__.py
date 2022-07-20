@@ -1,8 +1,7 @@
 import argparse
-import json
 
 from .version import __version__
-from .b64to16 import process_json
+from .b64to16 import Base64to16Converter
 
 
 if __name__ == '__main__':
@@ -18,7 +17,19 @@ if __name__ == '__main__':
         'json_file',
         type=str,
         help='path to a JSON file')
+    parser.add_argument(
+        '-x',
+        action='store_true',
+        help="do not prefix hexadecimal strings with '0x'")
+    parser.add_argument(
+        '-k',
+        action='store_true',
+        help=("convert dictionary keys to hexadecimal strings too" +
+              " (might cause conflicts)"))
     args = parser.parse_args()
-    data = process_json(args.json_file)
-    json_data = json.dumps(data)
+    cvt = Base64to16Converter(
+        hexprefix=(not args.x),
+        cvtkeys=args.k,
+    )
+    json_data = cvt.convert_json(args.json_file)
     print(json_data)
