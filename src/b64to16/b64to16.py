@@ -74,7 +74,22 @@ class Base64to16Converter:
         else:
             return data
 
-    def convert_json(self, json_file):
+    def convert_json_from_fp(self, fp):
+        """Processes JSON input, converting all string values in Base64 format
+        into hexadecimal strings. Assumes input is in JSON format.
+        If not, raises a json.JSONDecodeError.
+
+        Arguments:
+            json_file - path to the JSON file
+
+        Returns:
+            transformed JSON string
+        """
+        json_data = json.load(fp)
+        data = self.convert_data(json_data)
+        return json.dumps(data)
+
+    def convert_json_from_filename(self, json_file):
         """Processes a JSON file, converting all string values in Base64 format
         into hexadecimal strings. Assumes file is in JSON format.
         If not, raises a json.JSONDecodeError.
@@ -86,6 +101,18 @@ class Base64to16Converter:
             transformed JSON string
         """
         with open(json_file) as fp:
-            json_data = json.load(fp)
-            data = self.convert_data(json_data)
-            return json.dumps(data)
+            return self.convert_json_from_fp(fp)
+
+    def convert_json(self, json_filename):
+        """Processes a JSON file, converting all string values in Base64 format
+        into hexadecimal strings. Assumes file is in JSON format.
+        If not, raises a json.JSONDecodeError.
+        Deprecated. Use `convert_json_from_filename`.
+
+        Arguments:
+            json_filename - path to the JSON file
+
+        Returns:
+            transformed JSON string
+        """
+        return self.convert_json_from_filename(json_filename)
